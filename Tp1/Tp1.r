@@ -19,7 +19,7 @@ summary(Iris) # On a 0 comme valeur minimal
 Iris <- na.omit(Iris) # Permet de supprimer les éléments manquants
 dim(Iris) # On a les meme dimensions parcequ'il aucune champ vide
 
-#### Quelque Traitement dans le datasets
+#### Quelque Traitement dans le dataset
 
 require(tidyverse)
 install.packages("tidyverse")
@@ -41,9 +41,8 @@ plot(irisStandardize[, c(1)], irisStandardize[, c(2)], type = 'l')
 
 ## chose only lenght and width
 
-newIrisData <- Iris[, c(1, 2, 3, 4)] # standardize variables
-newIrisData
-
+newIrisData <- scale(Iris[, c(1, 2, 3, 4)]) # standardize variables
+head(newIrisData)
 # Estimating the optimal number of clusters
 
 wss <- (nrow(newIrisData) - 1) * sum(apply(newIrisData, 2, var))
@@ -52,22 +51,18 @@ for (i in 2:15)
 plot(1:15, wss, type = "b", xlab = "Number of Clusters", ylab = "Within groups sum of squares")
 
 # K-Means Cluster Analysis
-fit <- kmeans(newIrisData, 3, nstart = 100) # 3 cluster solution
+###### exemple1
+
+fit <- kmeans(newIrisData, 3, nstart = 25) # 3 cluster solution
 ww <- fit$cluster
 class(ww)
 newX <- newIrisData[, c(3)]
 newY <- newIrisData[, c(4)]
-
-qplot(newX, newY, color = fit$cluster)
-# get cluster means
-aggregate(newIrisData, by = list(fit$cluster), FUN = mean)
-# append cluster assignment
-newIrisData <- data.frame(newIrisData, fit$cluster)
-
-# Ward Hierarchical Clustering
-d <- dist(newIrisData, method = "euclidean") # distance matrix
-fit <- hclust(d, method = "ward")
-plot(fit) # display dendogram
-groups <- cutree(fit, k = 5) # cut tree into 5 clusters
-# draw dendogram with red borders around the 5 clusters
-rect.hclust(fit, k = 5, border = "red")
+##### Plot clusters with Petal lenght nd width
+qplot(newX, newY, color = fit$cluster, xlab = "Petal Lenght", ylab = "Petal width")
+##### exemple2 avec le packages factoextra
+set.seed(123)
+res.km <- kmeans(newIrisData, 3, nstart = 25)
+require(factoextra)
+fviz_cluster(res.km, data = Iris[, -5], palette = c("#2E9FDF", "#00AFBB", "#E7B800"), geom = "point",
+             ellipse.type = "convex", ggtheme = theme_bw())
