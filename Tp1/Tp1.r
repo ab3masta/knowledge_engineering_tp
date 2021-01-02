@@ -1,8 +1,6 @@
-########################### Set working directory #########################
+########################### Remove all objects #########################
 
 rm(list = ls(all = TRUE))
-setwd("D:/Master2/S1/Ingénierie des connaissances -- IC/Tp/Tp1/")
-getwd()
 
 ######## Load datasets
 
@@ -41,11 +39,11 @@ plot(irisStandardize[, c(1)], irisStandardize[, c(2)], type = 'l')
 
 ## chose only lenght and width
 
-newIrisData <- scale(Iris[, c(1, 2, 3, 4)]) # standardize variables
+newIrisData <- Iris[, c(1, 2, 3, 4)] # standardize variables
 head(newIrisData)
 # Estimating the optimal number of clusters
 
-wss <- (nrow(newIrisData) - 1) * sum(apply(newIrisData, 2, var))
+wss <- (nrow(newIrisData) - 1) * sum(apply(newIrisData, 3, var))
 for (i in 2:15)
   wss[i] <- sum(kmeans(newIrisData, centers = i)$withinss)
 plot(1:15, wss, type = "b", xlab = "Number of Clusters", ylab = "Within groups sum of squares")
@@ -58,7 +56,7 @@ ww <- fit$cluster
 class(ww)
 newX <- newIrisData[, c(3)]
 newY <- newIrisData[, c(4)]
-##### Plot clusters with Petal lenght nd width
+##### Plot clusters with Petal lenght and width
 qplot(newX, newY, color = fit$cluster, xlab = "Petal Lenght", ylab = "Petal width")
 ##### exemple2 avec le packages factoextra
 set.seed(123)
